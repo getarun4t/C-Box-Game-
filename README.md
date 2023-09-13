@@ -1,4 +1,4 @@
-# C-Box-Game-
+# C++ Box Game Rules
 
  * The goal is to implement the mechanics of a simple game and write test cases for them.
  * The rules of the game are:
