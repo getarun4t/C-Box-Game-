@@ -49,18 +49,74 @@
 
 class Box {
 public:
-    explicit Box(double initial_weight) : weight_(initial_weight) {}
+    explicit Box(double initial_weight) : weight_(initial_weight), total_weight_(initial_weight) {}
     static std::unique_ptr<Box> makeGreenBox(double initial_weight);
     static std::unique_ptr<Box> makeBlueBox(double initial_weight);
     bool operator<(const Box& rhs) const { return weight_ < rhs.weight_; }
 
-    // TODO
+    double getScore() const { return calculateScore(); }
 
+    void absorbWeight(double weight) {
+        absorbed_weights_.push_back(weight);
+        total_weight_ += weight;
+    }
 protected:
     double weight_;
+    double total_weight_;
+    std::vector<double> absorbed_weights_;
+
+    virtual double calculateScore() const = 0;
+    double meanOfLastThreeWeights() const {
+        double mean = 0.0;
+        int count = std::min(static_cast<int>(absorbed_weights_.size()), 3);
+        for (int i = 0; i < count; ++i) {
+            mean += absorbed_weights_[absorbed_weights_.size() - 1 - i];
+        }
+        return mean / count;
+    }
+
+    double smallestWeight() const {
+        if (absorbed_weights_.empty()) {
+            return std::numeric_limits<double>::max();
+        }
+        return *std::min_element(absorbed_weights_.begin(), absorbed_weights_.end());
+    }
+
+    double largestWeight() const {
+        if (absorbed_weights_.empty()) {
+            return std::numeric_limits<double>::min();
+        }
+        return *std::max_element(absorbed_weights_.begin(), absorbed_weights_.end());
+    }
 };
 
-// TODO
+class GreenBox : public Box {
+public:
+    using Box::Box;
+
+protected:
+    double calculateScore() const override {
+        double mean = meanOfLastThreeWeights();
+        return mean * mean;
+    }
+};
+
+class BlueBox : public Box {
+public:
+    using Box::Box;
+
+protected:
+    double calculateScore() const override {
+        double smallest = smallestWeight();
+        double largest = largestWeight();
+        return cantorsPairing(smallest, largest);
+    }
+
+private:
+    double cantorsPairing(double x, double y) const {
+        return 0.5 * (x + y) * (x + y + 1) + y;
+    }
+};
 
 class Player {
 public:
