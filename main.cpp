@@ -174,9 +174,14 @@ TEST_CASE("Final scores for first 8 Fibonacci numbers", "[fibonacci8]") {
 }
 
 TEST_CASE("Test absorption of green box", "[green]") {
-    // TODO
+    std::unique_ptr<Box> green_box = Box::makeGreenBox(0.0);
+    green_box->absorbWeight(5.0);
+    REQUIRE(green_box->getScore() == 25.0);
 }
 
 TEST_CASE("Test absorption of blue box", "[blue]") {
-    // TODO
+    std::unique_ptr<Box> blue_box = Box::makeBlueBox(0.2);
+    blue_box->absorbWeight(0.5);
+    blue_box->absorbWeight(0.1);
+    REQUIRE(blue_box->getScore() == 0.5);
 }
