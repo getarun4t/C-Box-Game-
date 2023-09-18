@@ -120,14 +120,19 @@ private:
 
 class Player {
 public:
-    void takeTurn(uint32_t input_weight,
-        const std::vector<std::unique_ptr<Box> >& boxes) {
-        // TODO
-    }
-    double getScore() const { return score_; }
+    Player() : score_(0.0) {}
 
+    void takeTurn(uint32_t input_weight, std::vector<std::unique_ptr<Box>>& boxes) {
+        auto min_box = std::min_element(boxes.begin(), boxes.end(), [](const auto& a, const auto& b) {
+            return *a < *b;
+            });
+        (*min_box)->absorbWeight(static_cast<double>(input_weight));
+        score_ += (*min_box)->getScore();
+    }
+
+    double getScore() const { return score_; }
 private:
-    double score_{ 0.0 };
+    double score_;
 };
 
 std::pair<double, double> play(const std::vector<uint32_t>& input_weights) {
