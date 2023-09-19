@@ -190,3 +190,46 @@ TEST_CASE("Test absorption of blue box", "[blue]") {
     blue_box->absorbWeight(0.1);
     REQUIRE(blue_box->getScore() == 0.5);
 }
+
+TEST_CASE("Test absorption of green box with less than 3 weights", "[green]") {
+    std::unique_ptr<Box> green_box = Box::makeGreenBox(0.0);
+    green_box->absorbWeight(5.0);
+    REQUIRE(green_box->getScore() == 25.0);
+}
+
+TEST_CASE("Test absorption of blue box with less than 3 weights", "[blue]") {
+    std::unique_ptr<Box> blue_box = Box::makeBlueBox(0.2);
+    blue_box->absorbWeight(0.5);
+    REQUIRE(blue_box->getScore() == 0.5);
+}
+
+TEST_CASE("Test absorption of green box with equal weights", "[green]") {
+    std::unique_ptr<Box> green_box = Box::makeGreenBox(0.0);
+    green_box->absorbWeight(5.0);
+    green_box->absorbWeight(5.0);
+    REQUIRE(green_box->getScore() == 50.0);
+}
+
+TEST_CASE("Test absorption of blue box with equal weights", "[blue]") {
+    std::unique_ptr<Box> blue_box = Box::makeBlueBox(0.2);
+    blue_box->absorbWeight(0.5);
+    blue_box->absorbWeight(0.5);
+    REQUIRE(blue_box->getScore() == 1.0);
+}
+
+TEST_CASE("Test absorption of green box with empty weights vector", "[green]") {
+    std::unique_ptr<Box> green_box = Box::makeGreenBox(0.0);
+    REQUIRE(green_box->getScore() == 0.0);
+}
+
+TEST_CASE("Test absorption of blue box with empty weights vector", "[blue]") {
+    std::unique_ptr<Box> blue_box = Box::makeBlueBox(0.2);
+    REQUIRE(blue_box->getScore() == 0.0);
+}
+
+TEST_CASE("Test play() function with empty input weights vector", "[play]") {
+    std::vector<uint32_t> inputs;
+    auto result = play(inputs);
+    REQUIRE(result.first == 0.0);
+    REQUIRE(result.second == 0.0);
+}
