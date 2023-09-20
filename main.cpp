@@ -66,9 +66,13 @@ protected:
     std::vector<double> absorbed_weights_;
 
     virtual double calculateScore() const = 0;
+
     double meanOfLastThreeWeights() const {
         double mean = 0.0;
         int count = std::min(static_cast<int>(absorbed_weights_.size()), 3);
+        if (count == 0) {
+            return mean;
+        }
         for (int i = 0; i < count; ++i) {
             mean += absorbed_weights_[absorbed_weights_.size() - 1 - i];
         }
@@ -93,7 +97,6 @@ protected:
 class GreenBox : public Box {
 public:
     using Box::Box;
-
 protected:
     double calculateScore() const override {
         double mean = meanOfLastThreeWeights();
@@ -104,19 +107,25 @@ protected:
 class BlueBox : public Box {
 public:
     using Box::Box;
-
 protected:
     double calculateScore() const override {
         double smallest = smallestWeight();
         double largest = largestWeight();
         return cantorsPairing(smallest, largest);
     }
-
 private:
     double cantorsPairing(double x, double y) const {
         return 0.5 * (x + y) * (x + y + 1) + y;
     }
 };
+
+std::unique_ptr<Box> Box::makeGreenBox(double initial_weight) {
+    return std::make_unique<GreenBox>(initial_weight);
+}
+
+std::unique_ptr<Box> Box::makeBlueBox(double initial_weight) {
+    return std::make_unique<BlueBox>(initial_weight);
+}
 
 class Player {
 public:
