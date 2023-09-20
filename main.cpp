@@ -107,14 +107,12 @@ protected:
 class BlueBox : public Box {
 public:
     using Box::Box;
-
 protected:
     double calculateScore() const override {
         double smallest = smallestWeight();
         double largest = largestWeight();
         return cantorsPairing(smallest, largest);
     }
-
 private:
     double cantorsPairing(double x, double y) const {
         return 0.5 * (x + y) * (x + y + 1) + y;
@@ -147,7 +145,7 @@ private:
 };
 
 std::pair<double, double> play(const std::vector<uint32_t>& input_weights) {
-    std::vector<std::unique_ptr<Box> > boxes;
+    std::vector<std::unique_ptr<Box>> boxes;
     boxes.emplace_back(Box::makeGreenBox(0.0));
     boxes.emplace_back(Box::makeGreenBox(0.1));
     boxes.emplace_back(Box::makeBlueBox(0.2));
